@@ -27,6 +27,19 @@ npm run build        # compile every service to dist/
 npm run format       # apply Prettier
 ```
 
+## Git hooks
+
+`npm install` installs two git hooks with `simple-git-hooks`:
+
+| Hook       | Runs                                                     | Time      |
+| ---------- | -------------------------------------------------------- | --------- |
+| pre-commit | Prettier and ESLint on staged files only (`lint-staged`) | 1 to 3 s  |
+| pre-push   | `npm run check`: format, lint, typecheck, and all tests  | 5 to 10 s |
+
+The hooks help you find errors before CI. They do not enforce the rules. CI enforces them.
+To skip a hook in an emergency, use `git commit --no-verify` or `git push --no-verify`.
+If you change the hook configuration in `package.json`, run `npm run prepare`.
+
 ## Example service
 
 ```sh
