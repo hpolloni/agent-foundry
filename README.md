@@ -77,17 +77,21 @@ The service validates configuration at startup and exits on an invalid value.
 
 ## GitHub repository setup
 
-`scripts/setup-repo.sh` applies the rulesets in `.github/rulesets/` to the GitHub repository.
-The `protect-master` ruleset blocks direct pushes, force-pushes, and deletion of `master`.
-Each change must come through a pull request, and the CI `check` and `integration` jobs must pass.
+`scripts/setup-repo.sh` applies the GitHub settings that are stored in this repository:
+
+| File                         | Applies                                                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/repo-settings.json` | Repository settings. Now: delete the head branch after each merge.                                                                                |
+| `.github/rulesets/*.json`    | Rulesets. `protect-master` requires a pull request with passing `check` and `integration` jobs, and blocks force-pushes and deletion of `master`. |
 
 ```sh
 gh auth login -h github.com        # once; you need admin permission on the repo
 scripts/setup-repo.sh --dry-run    # show what will change
-scripts/setup-repo.sh              # create or update the rulesets
+scripts/setup-repo.sh              # apply the settings and rulesets
 ```
 
-To change a rule, edit the JSON file in a pull request, then run the script again.
+The script is safe to run more than once. To change a setting or a rule, edit the JSON file in a pull request, then run the script again.
+Rulesets need a public repository or a paid plan. On a private repository on GitHub Free, the script skips the rulesets with a warning.
 
 ## Add a new service
 
