@@ -22,7 +22,8 @@ Run these from the repository root.
 
 ```sh
 npm install          # install all workspaces
-npm run check        # format check + lint + typecheck + test (same as CI)
+npm run check        # format check + lint + typecheck + unit tests
+npm run test:integration  # build, then test the real server process (CI runs it on PRs)
 npm run build        # compile every service to dist/
 npm run format       # apply Prettier
 ```
@@ -67,11 +68,18 @@ curl -X POST localhost:3000/v1/greetings -H 'content-type: application/json' -d 
 
 The service validates configuration at startup and exits on an invalid value.
 
+## Tests
+
+| Suite       | Location                       | How it works                                             | Runs in                                              |
+| ----------- | ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------- |
+| Unit        | `services/*/test/*.test.ts`    | In-process, with `app.inject()`. No network.             | `npm run check`, CI (all)                            |
+| Integration | `services/*/test/integration/` | Starts `dist/server.js` on a free port. Real HTTP calls. | `npm run test:integration`, CI on pull requests only |
+
 ## GitHub repository setup
 
 `scripts/setup-repo.sh` applies the rulesets in `.github/rulesets/` to the GitHub repository.
 The `protect-master` ruleset blocks direct pushes, force-pushes, and deletion of `master`.
-Each change must come through a pull request, and the CI `check` job must pass.
+Each change must come through a pull request, and the CI `check` and `integration` jobs must pass.
 
 ```sh
 gh auth login -h github.com        # once; you need admin permission on the repo

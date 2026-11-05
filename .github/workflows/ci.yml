@@ -28,3 +28,18 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+
+  integration:
+    # Integration tests start the real server process. They run on pull requests only.
+    if: github.event_name == 'pull_request'
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run test:integration
