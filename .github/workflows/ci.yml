@@ -22,6 +22,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      # The runner's bundled npm can be older than devEngines allows. package.json is the only source of the version.
+      - run: npm install -g "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
@@ -41,5 +43,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      # The runner's bundled npm can be older than devEngines allows. package.json is the only source of the version.
+      - run: npm install -g "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
       - run: npm ci
       - run: npm run test:integration
