@@ -31,6 +31,9 @@ export default tseslint.config(
       '@typescript-eslint/strict-boolean-expressions': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
+      // Fastify plugins and similar APIs must be async without an await.
+      // no-floating-promises and no-misused-promises catch the real promise errors.
+      '@typescript-eslint/require-await': 'off',
       eqeqeq: ['error', 'always'],
     },
   },

@@ -9,7 +9,6 @@ const GreetingResponse = z.object({
   message: z.string(),
 });
 
-// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugins must be async.
 export const greetingRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/greetings',
