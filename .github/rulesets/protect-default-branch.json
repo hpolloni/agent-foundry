@@ -1,5 +1,5 @@
 {
-  "name": "protect-master",
+  "name": "protect-default-branch",
   "target": "branch",
   "enforcement": "active",
   "conditions": {
