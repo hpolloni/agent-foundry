@@ -54,6 +54,20 @@ curl -X POST localhost:3000/v1/greetings -H 'content-type: application/json' -d 
 
 The service validates configuration at startup and exits on an invalid value.
 
+## GitHub repository setup
+
+`scripts/setup-repo.sh` applies the rulesets in `.github/rulesets/` to the GitHub repository.
+The `protect-master` ruleset blocks direct pushes, force-pushes, and deletion of `master`.
+Each change must come through a pull request, and the CI `check` job must pass.
+
+```sh
+gh auth login -h github.com        # once; you need admin permission on the repo
+scripts/setup-repo.sh --dry-run    # show what will change
+scripts/setup-repo.sh              # create or update the rulesets
+```
+
+To change a rule, edit the JSON file in a pull request, then run the script again.
+
 ## Add a new service
 
 1. Copy `services/example/` to `services/<name>/`.
