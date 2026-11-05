@@ -22,10 +22,24 @@ Run these from the repository root.
 
 ```sh
 npm install          # install all workspaces
-npm run check        # format check + lint + typecheck + test (same as CI)
+npm run check        # format check + lint + typecheck + unit tests
+npm run test:integration  # build, then test the real server process (CI runs it on PRs)
 npm run build        # compile every service to dist/
 npm run format       # apply Prettier
 ```
+
+## Git hooks
+
+`npm install` installs two git hooks with `simple-git-hooks`:
+
+| Hook       | Runs                                                     | Time      |
+| ---------- | -------------------------------------------------------- | --------- |
+| pre-commit | Prettier and ESLint on staged files only (`lint-staged`) | 1 to 3 s  |
+| pre-push   | `npm run check`: format, lint, typecheck, and all tests  | 5 to 10 s |
+
+The hooks help you find errors before CI. They do not enforce the rules. CI enforces them.
+To skip a hook in an emergency, use `git commit --no-verify` or `git push --no-verify`.
+If you change the hook configuration in `package.json`, run `npm run prepare`.
 
 ## Example service
 
@@ -54,11 +68,18 @@ curl -X POST localhost:3000/v1/greetings -H 'content-type: application/json' -d 
 
 The service validates configuration at startup and exits on an invalid value.
 
+## Tests
+
+| Suite       | Location                       | How it works                                             | Runs in                                              |
+| ----------- | ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------- |
+| Unit        | `services/*/test/*.test.ts`    | In-process, with `app.inject()`. No network.             | `npm run check`, CI (all)                            |
+| Integration | `services/*/test/integration/` | Starts `dist/server.js` on a free port. Real HTTP calls. | `npm run test:integration`, CI on pull requests only |
+
 ## GitHub repository setup
 
 `scripts/setup-repo.sh` applies the rulesets in `.github/rulesets/` to the GitHub repository.
 The `protect-master` ruleset blocks direct pushes, force-pushes, and deletion of `master`.
-Each change must come through a pull request, and the CI `check` job must pass.
+Each change must come through a pull request, and the CI `check` and `integration` jobs must pass.
 
 ```sh
 gh auth login -h github.com        # once; you need admin permission on the repo
