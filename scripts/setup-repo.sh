@@ -8,12 +8,14 @@
 # Safe to run more than once.
 #
 # Usage: scripts/setup-repo.sh [--dry-run] [--repo OWNER/NAME]
+#   --repo defaults to the GitHub repo of the current directory (gh repo view).
+#   For GitHub Enterprise Server, set GH_HOST.
 # Requires: gh (logged in, admin on the repo), node.
 
 set -euo pipefail
 
 usage() {
-  sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 die() {
@@ -52,7 +54,7 @@ settings_file="$root/.github/repo-settings.json"
 rulesets_dir="$root/.github/rulesets"
 ci_file="$root/.github/workflows/ci.yml"
 
-gh auth status >/dev/null 2>&1 || die "gh is not logged in. Run: gh auth login -h github.com"
+gh auth status >/dev/null 2>&1 || die "gh is not logged in. Run: gh auth login"
 
 if [[ -z "$repo" ]]; then
   repo="$(gh repo view --json nameWithOwner --jq .nameWithOwner)"
@@ -95,9 +97,12 @@ apply_rulesets() {
   local existing
   if ! existing="$(gh api "repos/$repo/rulesets" \
     --jq '.[] | select(.source_type == "Repository") | "\(.id) \(.name)"' 2>&1)"; then
-    if [[ "$existing" == *"Upgrade to GitHub Pro"* ]]; then
-      warn "the GitHub plan does not support rulesets on $repo (private repo on Free)."
-      warn "skipping rulesets. Upgrade to Pro or make the repo public to enable them."
+    # Admin permission was checked above, so a 403 here means the plan does not
+    # support rulesets (for example, a private repo on GitHub Free).
+    if [[ "$existing" == *"HTTP 403"* ]]; then
+      warn "GitHub refused rulesets on $repo (HTTP 403). The plan probably does not support"
+      warn "rulesets on this repo, for example a private repo on GitHub Free. Skipping rulesets."
+      warn "GitHub said: $(head -n 1 <<<"$existing")"
       return
     fi
     die "could not list rulesets: $existing"

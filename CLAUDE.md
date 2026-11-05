@@ -15,8 +15,8 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 
 ## Git workflow
 
-- Never commit or push directly to `master`. All changes go through a pull request.
-- Create a branch from an up-to-date `master` for each change. Use a short kebab-case name.
+- Never commit or push directly to the default branch (`main` or `master`). All changes go through a pull request.
+- Create a branch from an up-to-date default branch for each change. Use a short kebab-case name.
 - Keep one topic in each pull request.
 - Before you open a pull request, make sure that `npm run check` passes. For startup or shutdown changes, also run `npm run test:integration`.
 - The pull request description must have a summary and a test plan.
