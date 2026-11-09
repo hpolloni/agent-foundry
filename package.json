@@ -8,6 +8,13 @@
   "engines": {
     "node": ">=24"
   },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "^11.21.2",
+      "onFail": "error"
+    }
+  },
   "scripts": {
     "prepare": "simple-git-hooks",
     "build": "npm run build --workspaces",
@@ -40,5 +47,9 @@
       "eslint --max-warnings 0 --no-warn-ignored"
     ],
     "*.{json,md,yml,yaml}": "prettier --write"
+  },
+  "allowScripts": {
+    "simple-git-hooks": false,
+    "fsevents": false
   }
 }

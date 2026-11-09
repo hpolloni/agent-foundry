@@ -21,7 +21,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
+          # No `cache: npm` here: setup-node runs the bundled npm in the repo before the upgrade
+          # below, and devEngines makes that older npm fail.
+      # The runner's bundled npm can be older than devEngines allows. package.json is the only source of the version.
+      - run: npm install -g "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
       - run: npm ci
       - run: npm run format:check
       - run: npm run lint
@@ -40,6 +48,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
+          # No `cache: npm` here: setup-node runs the bundled npm in the repo before the upgrade
+          # below, and devEngines makes that older npm fail.
+      # The runner's bundled npm can be older than devEngines allows. package.json is the only source of the version.
+      - run: npm install -g "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
       - run: npm ci
       - run: npm run test:integration

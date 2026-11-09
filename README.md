@@ -14,7 +14,7 @@ Monorepo for agent-foundry services. TypeScript on Node.js 24, with strict type 
 ## Prerequisites
 
 - Node.js 24 (see `.nvmrc`)
-- npm 11
+- npm 11.21.2 or later in 11.x (see `devEngines` in `package.json`). To upgrade: `npm install -g npm@11`
 
 ## Commands
 
