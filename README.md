@@ -24,7 +24,7 @@ Run these from the repository root.
 npm install          # install all workspaces
 npm run check        # format check + lint + typecheck + unit tests with coverage gate
 npm run test:integration  # build, then test the real server process (CI runs it on PRs)
-npm run test:mutation     # mutation testing with Stryker (local only)
+npm run test:mutation     # mutation testing with Stryker (CI runs it on PRs)
 npm run build        # compile every service to dist/
 npm run format       # apply Prettier
 ```
@@ -93,7 +93,7 @@ The service validates configuration at startup and exits on an invalid value.
 
 `npm run test:mutation` runs [Stryker](https://stryker-mutator.io/) on `services/*/src`. Stryker makes small changes (mutants) to the code and runs the unit tests for each one. A mutant that no test detects shows a test gap.
 
-- Runs locally only. It is not in CI or in the git hooks.
+- CI runs it on pull requests only, as the `mutation` job. It is not in the git hooks. CI has no incremental file, so it tests all mutants.
 - Fails if the mutation score is below 80%.
 - The TypeScript checker removes mutants that do not compile, so strict types do not raise the score.
 - Incremental: a second run tests only mutants in changed code. A full run takes approximately 20 s, an incremental run approximately 5 s.
@@ -104,10 +104,10 @@ The service validates configuration at startup and exits on an invalid value.
 
 `scripts/setup-repo.sh` applies the GitHub settings that are stored in this repository:
 
-| File                         | Applies                                                                                                                                                             |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/repo-settings.json` | Repository settings. Now: delete the head branch after each merge.                                                                                                  |
-| `.github/rulesets/*.json`    | Rulesets. `protect-default-branch` requires a pull request with passing `check` and `integration` jobs, and blocks force-pushes and deletion of the default branch. |
+| File                         | Applies                                                                                                                                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/repo-settings.json` | Repository settings. Now: delete the head branch after each merge.                                                                                                               |
+| `.github/rulesets/*.json`    | Rulesets. `protect-default-branch` requires a pull request with passing `check`, `integration`, and `mutation` jobs, and blocks force-pushes and deletion of the default branch. |
 
 ```sh
 gh auth login                      # once; you need admin permission on the repo
