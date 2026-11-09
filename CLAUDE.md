@@ -31,7 +31,7 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 - Do not weaken `tsconfig.base.json` or `eslint.config.js` to make a change pass.
 - Do not use `any`, non-null assertions (`!`), `@ts-ignore`, or `@ts-nocheck`. Use `unknown` and narrow it.
 - Validate all external input (HTTP, env, files, queues) with a Zod schema. Derive types with `z.infer`.
-- Define Fastify routes with Zod schemas for `body`, `params`, `querystring`, and `response`.
+- Define Fastify routes with Zod schemas for `body`, `params`, `querystring`, and `response`. `src/route-schemas.ts` rejects a route at registration without `response`, without `params` for a path parameter, or without `body` for POST, PUT, and PATCH. It cannot detect a missing `querystring` schema: add one when a handler reads the query.
 - Indexed access returns `T | undefined` (`noUncheckedIndexedAccess`). Handle the `undefined` case.
 
 ## Conventions
