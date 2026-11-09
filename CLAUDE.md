@@ -9,6 +9,7 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 - `npm run check`: format check, lint, typecheck, and test. Run it before you finish any change.
 - `npm run dev -w @agent-foundry/example`: run the example service with reload.
 - `npm run format`: fix formatting.
+- `npm run test:mutation`: Stryker mutation testing, local only. Run it after you add or change logic in `src/`. A surviving mutant means a missing test: add the test. Do not lower the 80% threshold.
 - Git hooks: pre-commit runs `lint-staged`; pre-push runs `npm run check`. Do not use `--no-verify`. Fix the failure.
 - Use the npm version in `devEngines` (`package.json`). An older npm stops with `EBADDEVENGINES`. npm before 11.21.2 can remove the `@rolldown/binding-*` packages for other platforms from `package-lock.json` (npm/cli#4828).
 - npm blocks dependency install scripts unless `allowScripts` in `package.json` approves them. Before you approve one, find out what the script does.

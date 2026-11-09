@@ -24,6 +24,7 @@ Run these from the repository root.
 npm install          # install all workspaces
 npm run check        # format check + lint + typecheck + unit tests
 npm run test:integration  # build, then test the real server process (CI runs it on PRs)
+npm run test:mutation     # mutation testing with Stryker (local only)
 npm run build        # compile every service to dist/
 npm run format       # apply Prettier
 ```
@@ -74,6 +75,17 @@ The service validates configuration at startup and exits on an invalid value.
 | ----------- | ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------- |
 | Unit        | `services/*/test/*.test.ts`    | In-process, with `app.inject()`. No network.             | `npm run check`, CI (all)                            |
 | Integration | `services/*/test/integration/` | Starts `dist/server.js` on a free port. Real HTTP calls. | `npm run test:integration`, CI on pull requests only |
+
+### Mutation testing
+
+`npm run test:mutation` runs [Stryker](https://stryker-mutator.io/) on `services/*/src`. Stryker makes small changes (mutants) to the code and runs the unit tests for each one. A mutant that no test detects shows a test gap.
+
+- Runs locally only. It is not in CI or in the git hooks.
+- Fails if the mutation score is below 80%.
+- The TypeScript checker removes mutants that do not compile, so strict types do not raise the score.
+- Incremental: a second run tests only mutants in changed code. A full run takes approximately 20 s, an incremental run approximately 5 s.
+- `src/server.ts` is not mutated. Only the integration tests cover it.
+- HTML report: `services/<name>/reports/mutation/index.html`.
 
 ## GitHub repository setup
 
