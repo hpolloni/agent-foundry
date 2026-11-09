@@ -10,7 +10,8 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 - `npm run dev -w @agent-foundry/example`: run the example service with reload.
 - `npm run format`: fix formatting.
 - Git hooks: pre-commit runs `lint-staged`; pre-push runs `npm run check`. Do not use `--no-verify`. Fix the failure.
-- After `npm install <pkg>`, make sure that `package-lock.json` still lists `@rolldown/binding-*` for all platforms. If they are gone (npm bug 4828), delete `node_modules` and `package-lock.json`, then run `npm install`.
+- Use the npm version in `devEngines` (`package.json`). An older npm stops with `EBADDEVENGINES`. npm before 11.21.2 can remove the `@rolldown/binding-*` packages for other platforms from `package-lock.json` (npm/cli#4828).
+- npm blocks dependency install scripts unless `allowScripts` in `package.json` approves them. Before you approve one, find out what the script does.
 - `npm run test:integration`: build, then start the real server and test it over HTTP. CI runs it on pull requests only. Run it locally when you change `src/server.ts`, `src/config.ts`, or startup and shutdown code.
 
 ## Git workflow
