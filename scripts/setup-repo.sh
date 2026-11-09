@@ -4,6 +4,8 @@
 # 1. Repository settings from .github/repo-settings.json (PATCH /repos/{repo}).
 # 2. Rulesets from .github/rulesets/*.json. An existing ruleset with the same
 #    name is updated. If the plan does not support rulesets, this step is skipped.
+# 3. Labels from .github/labels.json. An existing label with the same name is
+#    updated. The agent workflow (.claude/agents/) uses these labels.
 #
 # Safe to run more than once.
 #
@@ -15,7 +17,7 @@
 set -euo pipefail
 
 usage() {
-  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 die() {
@@ -53,6 +55,7 @@ root="$(git rev-parse --show-toplevel)"
 settings_file="$root/.github/repo-settings.json"
 rulesets_dir="$root/.github/rulesets"
 ci_file="$root/.github/workflows/ci.yml"
+labels_file="$root/.github/labels.json"
 
 gh auth status >/dev/null 2>&1 || die "gh is not logged in. Run: gh auth login"
 
@@ -145,5 +148,27 @@ apply_rulesets() {
   done
 }
 
+apply_labels() {
+  [[ -f "$labels_file" ]] || {
+    warn "no ${labels_file#"$root"/}; skipping labels"
+    return
+  }
+  # One line for each label: name, color, and description, separated by tabs.
+  local lines name color description
+  lines="$(node -e 'for (const l of JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")))
+    console.log([l.name, l.color, l.description ?? ""].join("\t"))' "$labels_file")"
+  while IFS=$'\t' read -r name color description; do
+    [[ -n "$name" ]] || continue
+    if [[ $dry_run -eq 1 ]]; then
+      echo "[dry-run] would create or update label \"$name\" on $repo"
+      continue
+    fi
+    # --force updates the color and description of an existing label.
+    gh label create "$name" --repo "$repo" --color "$color" --description "$description" --force >/dev/null
+    echo "done: create or update label \"$name\" on $repo"
+  done <<<"$lines"
+}
+
 apply_settings
 apply_rulesets
+apply_labels

@@ -10,6 +10,8 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/reports/**',
       '**/.stryker-tmp/**',
+      // Session worktrees made by `claude --worktree` are full copies of the repository.
+      '.claude/worktrees/**',
     ],
   },
   eslint.configs.recommended,
