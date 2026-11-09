@@ -79,19 +79,29 @@ The service validates configuration at startup and exits on an invalid value.
 
 `scripts/setup-repo.sh` applies the GitHub settings that are stored in this repository:
 
-| File                         | Applies                                                                                                                                           |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/repo-settings.json` | Repository settings. Now: delete the head branch after each merge.                                                                                |
-| `.github/rulesets/*.json`    | Rulesets. `protect-master` requires a pull request with passing `check` and `integration` jobs, and blocks force-pushes and deletion of `master`. |
+| File                         | Applies                                                                                                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/repo-settings.json` | Repository settings. Now: delete the head branch after each merge.                                                                                                  |
+| `.github/rulesets/*.json`    | Rulesets. `protect-default-branch` requires a pull request with passing `check` and `integration` jobs, and blocks force-pushes and deletion of the default branch. |
 
 ```sh
-gh auth login -h github.com        # once; you need admin permission on the repo
+gh auth login                      # once; you need admin permission on the repo
 scripts/setup-repo.sh --dry-run    # show what will change
 scripts/setup-repo.sh              # apply the settings and rulesets
 ```
 
+The script finds the GitHub repository from the `origin` remote, so it works in any copy of this repository. To choose a different repository, use `--repo OWNER/NAME`.
 The script is safe to run more than once. To change a setting or a rule, edit the JSON file in a pull request, then run the script again.
 Rulesets need a public repository or a paid plan. On a private repository on GitHub Free, the script skips the rulesets with a warning.
+
+## Use this repository as a template
+
+1. Copy the repository, or use it as a GitHub template.
+2. Change `name` in the root `package.json`. Change the `@agent-foundry/` scope in `services/*/package.json`, `README.md`, and `CLAUDE.md`.
+3. Run `npm install` to update `package-lock.json` and install the git hooks.
+4. Push to GitHub, then run `scripts/setup-repo.sh`.
+
+CI and the ruleset use the default branch of the new repository. Both `main` and `master` work without changes.
 
 ## Add a new service
 

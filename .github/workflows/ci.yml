@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    # Covers both common default branch names, so copies of this repo work unchanged.
+    branches: [main, master]
   pull_request:
 
 permissions:
