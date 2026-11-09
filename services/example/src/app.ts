@@ -6,6 +6,7 @@ import {
 } from 'fastify-type-provider-zod';
 
 import type { Config } from './config.ts';
+import { assertRouteSchemas } from './route-schemas.ts';
 import { greetingRoutes } from './routes/greetings.ts';
 import { healthRoutes } from './routes/health.ts';
 
@@ -18,13 +19,8 @@ export async function buildApp(config: Pick<Config, 'LOG_LEVEL'>): Promise<Fasti
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  // Every route must declare its response shape, so responses never leak unvalidated data.
-  app.addHook('onRoute', (route) => {
-    const response: unknown = route.schema?.response;
-    if (typeof response !== 'object' || response === null || Object.keys(response).length === 0) {
-      throw new Error(`Route ${String(route.method)} ${route.url} has no response schema`);
-    }
-  });
+  // Reject routes without the required Zod schemas when they are registered.
+  app.addHook('onRoute', assertRouteSchemas);
 
   await app.register(healthRoutes);
   await app.register(greetingRoutes, { prefix: '/v1' });
