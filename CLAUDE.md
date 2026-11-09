@@ -10,7 +10,7 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 - Quality gates in `npm run check`: cyclomatic complexity 10 or less for each function (`eslint.config.js`), and 90% unit test coverage for lines, statements, functions, and branches (`vitest.config.ts`). If a gate fails, split the function or add tests. Do not raise the complexity limit or lower the coverage thresholds.
 - `npm run dev -w @agent-foundry/example`: run the example service with reload.
 - `npm run format`: fix formatting.
-- `npm run test:mutation`: Stryker mutation testing, local only. Run it after you add or change logic in `src/`. A surviving mutant means a missing test: add the test. Do not lower the 80% threshold.
+- `npm run test:mutation`: Stryker mutation testing. CI runs it on pull requests only. Run it locally after you add or change logic in `src/`. A surviving mutant means a missing test: add the test. Do not lower the 80% threshold.
 - Git hooks: pre-commit runs `lint-staged`; pre-push runs `npm run check`. Do not use `--no-verify`. Fix the failure.
 - Use the npm version in `devEngines` (`package.json`). An older npm stops with `EBADDEVENGINES`. npm before 11.21.2 can remove the `@rolldown/binding-*` packages for other platforms from `package-lock.json` (npm/cli#4828).
 - npm blocks dependency install scripts unless `allowScripts` in `package.json` approves them. Before you approve one, find out what the script does.
@@ -23,7 +23,7 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 - Keep one topic in each pull request.
 - Before you open a pull request, make sure that `npm run check` passes. For startup or shutdown changes, also run `npm run test:integration`.
 - The pull request description must have a summary and a test plan.
-- Wait for the CI `check` and `integration` jobs to pass. Do not merge a pull request with a failed check.
+- Wait for the CI `check`, `integration`, and `mutation` jobs to pass. Do not merge a pull request with a failed check.
 - Do not merge pull requests. A person reviews and merges them.
 
 ## Type-safety rules
