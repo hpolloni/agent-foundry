@@ -60,3 +60,27 @@ jobs:
           restore-keys: npm-${{ runner.os }}-
       - run: npm ci
       - run: npm run test:integration
+
+  mutation:
+    # Stryker mutation testing. A full run takes approximately 20 s. It runs on pull requests only.
+    if: github.event_name == 'pull_request'
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          # No `cache: npm` here: setup-node runs the bundled npm in the repo before the upgrade
+          # below, and devEngines makes that older npm fail.
+      # The runner's bundled npm can be older than devEngines allows. package.json is the only source of the version.
+      - run: npm install -g "npm@$(node -p "require('./package.json').devEngines.packageManager.version")"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+      - run: npm ci
+      # CI has no incremental file, so Stryker tests all mutants.
+      - run: npm run test:mutation
