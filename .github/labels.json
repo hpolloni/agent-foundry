@@ -1,0 +1,37 @@
+[
+  {
+    "name": "ready",
+    "color": "0e8a16",
+    "description": "Issue is clear and has no open dependencies. A builder can take it."
+  },
+  {
+    "name": "in-progress",
+    "color": "fbca04",
+    "description": "A builder session works on this issue."
+  },
+  {
+    "name": "P1",
+    "color": "b60205",
+    "description": "Priority 1: do first. Broken build, bug, or blocker for other issues."
+  },
+  {
+    "name": "P2",
+    "color": "d93f0b",
+    "description": "Priority 2: planned work."
+  },
+  {
+    "name": "P3",
+    "color": "c5def5",
+    "description": "Priority 3: do when there is time."
+  },
+  {
+    "name": "changes-requested",
+    "color": "e99695",
+    "description": "The reviewer agent found problems in this pull request."
+  },
+  {
+    "name": "agent-approved",
+    "color": "5319e7",
+    "description": "The reviewer agent found no problems. A person must still review and merge."
+  }
+]
