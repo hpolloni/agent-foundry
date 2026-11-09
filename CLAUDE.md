@@ -6,7 +6,8 @@ npm workspaces monorepo. Each service is in `services/<name>/`. TypeScript 6.0 o
 
 ## Commands (run from the repository root)
 
-- `npm run check`: format check, lint, typecheck, and test. Run it before you finish any change.
+- `npm run check`: format check, lint, typecheck, and unit tests with coverage. Run it before you finish any change.
+- Quality gates in `npm run check`: cyclomatic complexity 10 or less for each function (`eslint.config.js`), and 90% unit test coverage for lines, statements, functions, and branches (`vitest.config.ts`). If a gate fails, split the function or add tests. Do not raise the complexity limit or lower the coverage thresholds.
 - `npm run dev -w @agent-foundry/example`: run the example service with reload.
 - `npm run format`: fix formatting.
 - `npm run test:mutation`: Stryker mutation testing, local only. Run it after you add or change logic in `src/`. A surviving mutant means a missing test: add the test. Do not lower the 80% threshold.

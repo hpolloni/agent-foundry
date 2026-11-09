@@ -43,6 +43,8 @@ export default tseslint.config(
       // no-floating-promises and no-misused-promises catch the real promise errors.
       '@typescript-eslint/require-await': 'off',
       eqeqeq: ['error', 'always'],
+      // Cyclomatic complexity gate. Split a function that has more than 10 paths.
+      complexity: ['error', { max: 10 }],
     },
   },
   {

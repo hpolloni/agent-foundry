@@ -22,7 +22,7 @@ Run these from the repository root.
 
 ```sh
 npm install          # install all workspaces
-npm run check        # format check + lint + typecheck + unit tests
+npm run check        # format check + lint + typecheck + unit tests with coverage gate
 npm run test:integration  # build, then test the real server process (CI runs it on PRs)
 npm run test:mutation     # mutation testing with Stryker (local only)
 npm run build        # compile every service to dist/
@@ -75,6 +75,19 @@ The service validates configuration at startup and exits on an invalid value.
 | ----------- | ------------------------------ | -------------------------------------------------------- | ---------------------------------------------------- |
 | Unit        | `services/*/test/*.test.ts`    | In-process, with `app.inject()`. No network.             | `npm run check`, CI (all)                            |
 | Integration | `services/*/test/integration/` | Starts `dist/server.js` on a free port. Real HTTP calls. | `npm run test:integration`, CI on pull requests only |
+
+### Quality gates
+
+`npm run check` and CI fail when one of these gates fails:
+
+| Gate                  | Limit                                                      | Configured in                      |
+| --------------------- | ---------------------------------------------------------- | ---------------------------------- |
+| Cyclomatic complexity | 10 or less for each function (ESLint `complexity` rule)    | `eslint.config.js`                 |
+| Unit test coverage    | 90% or more for lines, statements, functions, and branches | `services/<name>/vitest.config.ts` |
+
+- `npm run test:coverage` runs the unit tests with coverage. `npm run test` runs them without coverage, so a run of one test file does not fail the gate.
+- Coverage includes `src/**/*.ts` except `src/server.ts`. Only the integration tests cover `src/server.ts`.
+- HTML report: `services/<name>/coverage/index.html`.
 
 ### Mutation testing
 
